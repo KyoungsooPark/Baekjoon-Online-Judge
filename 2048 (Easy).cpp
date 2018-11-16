@@ -3,7 +3,7 @@ https://www.acmicpc.net/problem/12100
 */
 
 #include <cstdio>
-#define MERGED	true
+#define MERGED		true
 #define NOT_MERGED	false
 using namespace std;
 
@@ -23,17 +23,17 @@ void go(int n) {
 
 		for (int i = 0; i < n; i++) {
 			switch (dir[i]) {
-			case 0:	// »ó
+			case 0:	// ìƒ
 				for (int r = 1; r < N; r++) {
 					for (int c = 0; c < N; c++) {
-						if (cpy[r][c][0] != 0) {	// ¿òÁ÷ÀÏ ºí·ÏÀÌ Á¸ÀçÇÏ´Â °æ¿ì
-							for (int j = r; j > 0; j--) {	// ¿òÁ÷ÀÏ À§Ä¡ÀÇ ºí·Ï Å½»ö
-								if (cpy[j - 1][c][0] == 0) {	// ºí·ÏÀÌ ¾øÀ¸¸é
-									cpy[j - 1][c][0] = cpy[j][c][0];	// ºí·ÏÀ» ÇÑ Ä­ ÀÌµ¿
+						if (cpy[r][c][0] != 0) {	// ì›€ì§ì¼ ë¸”ë¡ì´ ì¡´ì¬í•˜ëŠ” ê²½ìš°
+							for (int j = r; j > 0; j--) {	// ì›€ì§ì¼ ìœ„ì¹˜ì˜ ë¸”ë¡ íƒìƒ‰
+								if (cpy[j - 1][c][0] == 0) {	// ë¸”ë¡ì´ ì—†ìœ¼ë©´
+									cpy[j - 1][c][0] = cpy[j][c][0];	// ë¸”ë¡ì„ í•œ ì¹¸ ì´ë™
 									cpy[j][c][0] = 0;
 								}
-								else {	// ¿òÁ÷ÀÏ À§Ä¡¿¡ ºí·ÏÀÌ Á¸ÀçÇÏ´Â °æ¿ì
-									// ¿òÁ÷ÀÏ ºí·Ï°ú ÇÔÄ¥ ¼ö ÀÖ´ÂÁö °Ë»ç
+								else {	// ì›€ì§ì¼ ìœ„ì¹˜ì— ë¸”ë¡ì´ ì¡´ì¬í•˜ëŠ” ê²½ìš°
+									// ì›€ì§ì¼ ë¸”ë¡ê³¼ í•¨ì¹  ìˆ˜ ìˆëŠ”ì§€ ê²€ì‚¬
 									if (cpy[j - 1][c][0] == cpy[j][c][0] && cpy[j - 1][c][1] == NOT_MERGED) {
 										cpy[j - 1][c][0] += cpy[j][c][0];
 										cpy[j - 1][c][1] = MERGED;
@@ -46,7 +46,7 @@ void go(int n) {
 					}
 				}
 				break;
-			case 1:	// ÇÏ
+			case 1:	// í•˜
 				for (int r = N - 2; r >= 0; r--) {
 					for (int c = 0; c < N; c++) {
 						if (cpy[r][c][0] != 0) {
@@ -68,7 +68,7 @@ void go(int n) {
 					}
 				}
 				break;
-			case 2:	// ÁÂ
+			case 2:	// ì¢Œ
 				for (int r = 0; r < N; r++) {
 					for (int c = 1; c < N; c++) {
 						if (cpy[r][c][0] != 0) {
@@ -90,7 +90,7 @@ void go(int n) {
 					}
 				}
 				break;
-			case 3:	// ¿ì
+			case 3:	// ìš°
 				for (int r = 0; r < N; r++) {
 					for (int c = N - 2; c >= 0; c--) {
 						if (cpy[r][c][0] != 0) {
@@ -113,12 +113,12 @@ void go(int n) {
 				}
 				break;
 			}
-			// ¸ğµç ºí·ÏÀ» ÀÌµ¿ ¹æÇâÀ¸·Î ¿òÁ÷ÀÎ ÈÄ flag ÃÊ±âÈ­
+			// ëª¨ë“  ë¸”ë¡ì„ ì´ë™ ë°©í–¥ìœ¼ë¡œ ì›€ì§ì¸ í›„ flag ì´ˆê¸°í™”
 			for (int r = 0; r < N; r++)
 				for (int c = 0; c < N; c++)
 					cpy[r][c][1] = NOT_MERGED;
 		}
-		// ÃÖ´ë°ª Å½»ö
+		// ìµœëŒ€ê°’ íƒìƒ‰
 		for (int r = 0; r < N; r++)
 			for (int c = 0; c < N; c++)
 				if (ans < cpy[r][c][0])
