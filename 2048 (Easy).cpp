@@ -3,14 +3,25 @@ https://www.acmicpc.net/problem/12100
 */
 
 #include <cstdio>
-#define MERGED		true
-#define NOT_MERGED	false
+#define NOT_MERGED	0
+#define MERGED		1
 using namespace std;
 
 int board[20][20], dir[5];
-int dx[4] = { -1, 1, 0, 0 };
-int dy[4] = { 0, 0, -1, 1 };
 int N, ans;
+
+void move(int &src, int &dst) {
+	dst = src;
+	src = 0;
+}
+
+void merge(int &src, int &dst, int &flag) {
+	if (src == dst && flag == NOT_MERGED) {
+		dst *= 2;
+		flag = MERGED;
+		src = 0;
+	}
+}
 
 void go(int n) {
 	if (n == 5) {
@@ -18,7 +29,7 @@ void go(int n) {
 		for (int r = 0; r < N; r++)
 			for (int c = 0; c < N; c++) {
 				cpy[r][c][0] = board[r][c];
-				cpy[r][c][1] = false;
+				cpy[r][c][1] = NOT_MERGED;
 			}
 
 		for (int i = 0; i < n; i++) {
@@ -28,17 +39,12 @@ void go(int n) {
 					for (int c = 0; c < N; c++) {
 						if (cpy[r][c][0] != 0) {	// 움직일 블록이 존재하는 경우
 							for (int j = r; j > 0; j--) {	// 움직일 위치의 블록 탐색
-								if (cpy[j - 1][c][0] == 0) {	// 블록이 없으면
-									cpy[j - 1][c][0] = cpy[j][c][0];	// 블록을 한 칸 이동
-									cpy[j][c][0] = 0;
-								}
-								else {	// 움직일 위치에 블록이 존재하는 경우
-									// 움직일 블록과 함칠 수 있는지 검사
-									if (cpy[j - 1][c][0] == cpy[j][c][0] && cpy[j - 1][c][1] == NOT_MERGED) {
-										cpy[j - 1][c][0] += cpy[j][c][0];
-										cpy[j - 1][c][1] = MERGED;
-										cpy[j][c][0] = 0;
-									}
+								if (cpy[j - 1][c][0] == 0)
+									// 블록이 없으면 move
+									move(cpy[j][c][0], cpy[j - 1][c][0]);
+								else {
+									// 움직일 위치에 블록이 존재하는 경우 merge
+									merge(cpy[j][c][0], cpy[j - 1][c][0], cpy[j - 1][c][1]);
 									break;
 								}
 							}
@@ -51,16 +57,10 @@ void go(int n) {
 					for (int c = 0; c < N; c++) {
 						if (cpy[r][c][0] != 0) {
 							for (int j = r; j < N - 1; j++) {
-								if (cpy[j + 1][c][0] == 0) {
-									cpy[j + 1][c][0] = cpy[j][c][0];
-									cpy[j][c][0] = 0;
-								}
+								if (cpy[j + 1][c][0] == 0)
+									move(cpy[j][c][0], cpy[j + 1][c][0]);
 								else {
-									if (cpy[j + 1][c][0] == cpy[j][c][0] && cpy[j + 1][c][1] == NOT_MERGED) {
-										cpy[j + 1][c][0] += cpy[j][c][0];
-										cpy[j + 1][c][1] = MERGED;
-										cpy[j][c][0] = 0;
-									}
+									merge(cpy[j][c][0], cpy[j + 1][c][0], cpy[j + 1][c][1]);
 									break;
 								}
 							}
@@ -73,16 +73,10 @@ void go(int n) {
 					for (int c = 1; c < N; c++) {
 						if (cpy[r][c][0] != 0) {
 							for (int j = c; j > 0; j--) {
-								if (cpy[r][j - 1][0] == 0) {
-									cpy[r][j - 1][0] = cpy[r][j][0];
-									cpy[r][j][0] = 0;
-								}
+								if (cpy[r][j - 1][0] == 0)
+									move(cpy[r][j][0], cpy[r][j - 1][0]);
 								else {
-									if (cpy[r][j - 1][0] == cpy[r][j][0] && cpy[r][j - 1][1] == NOT_MERGED) {
-										cpy[r][j - 1][0] += cpy[r][j][0];
-										cpy[r][j - 1][1] = MERGED;
-										cpy[r][j][0] = 0;
-									}
+									merge(cpy[r][j][0], cpy[r][j - 1][0], cpy[r][j - 1][1]);
 									break;
 								}
 							}
@@ -95,16 +89,10 @@ void go(int n) {
 					for (int c = N - 2; c >= 0; c--) {
 						if (cpy[r][c][0] != 0) {
 							for (int j = c; j < N - 1; j++) {
-								if (cpy[r][j + 1][0] == 0) {
-									cpy[r][j + 1][0] = cpy[r][j][0];
-									cpy[r][j][0] = 0;
-								}
+								if (cpy[r][j + 1][0] == 0)
+									move(cpy[r][j][0], cpy[r][j + 1][0]);
 								else {
-									if (cpy[r][j + 1][0] == cpy[r][j][0] && cpy[r][j + 1][1] == NOT_MERGED) {
-										cpy[r][j + 1][0] += cpy[r][j][0];
-										cpy[r][j + 1][1] = MERGED;
-										cpy[r][j][0] = 0;
-									}
+									merge(cpy[r][j][0], cpy[r][j + 1][0], cpy[r][j + 1][1]);
 									break;
 								}
 							}
