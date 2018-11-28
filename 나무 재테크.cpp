@@ -8,7 +8,7 @@ https://www.acmicpc.net/problem/16235
 using namespace std;
 typedef struct { int x, y, l; } point;
 
-queue<point> q[PRIORITY];	// ¿ì¼±¼øÀ§ Å¥
+queue<point> q[PRIORITY];	// ìš°ì„ ìˆœìœ„ í
 int map[10][10], A[10][10];
 int dx[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
 int dy[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
@@ -17,21 +17,21 @@ int N, M, K;
 void spring(void) {
 	int qsize[PRIORITY];
 	for (int p = 1; p < PRIORITY; p++)
-		// ³ª¹«ÀÇ ³ªÀÌ¸¦ Áõ°¡½ÃÄÑ¼­ ´Ù½Ã Å¥¿¡ »ğÀÔÇÏ¹Ç·Î Å¥ »çÀÌÁî°¡ ¼ö½Ã·Î ´Ş¶óÁü
-		// µû¶ó¼­ ¹Ì¸® ÇöÀç Å¥ »çÀÌÁî¸¦ ÀúÀåÇØ¾ß ÇÔ
+		// ë‚˜ë¬´ì˜ ë‚˜ì´ë¥¼ ì¦ê°€ì‹œì¼œì„œ ë‹¤ì‹œ íì— ì‚½ì…í•˜ë¯€ë¡œ í ì‚¬ì´ì¦ˆê°€ ìˆ˜ì‹œë¡œ ë‹¬ë¼ì§
+		// ë”°ë¼ì„œ ë¯¸ë¦¬ í˜„ì¬ í ì‚¬ì´ì¦ˆë¥¼ ì €ì¥í•´ì•¼ í•¨
 		qsize[p] = q[p].size();
 
 	for (int p = 1; p < PRIORITY; p++) {
 		while (qsize[p]--) {
 			point pnt = q[p].front();
 			q[p].pop();
-			if (map[pnt.x][pnt.y] >= p) {	// ¾çºĞÀÌ ÃæºĞÇÑ °æ¿ì
-				map[pnt.x][pnt.y] -= p;		// ¾çºĞ ¼·Ãë
-				pnt.l++;					// ³ªÀÌ Áõ°¡
-				q[pnt.l].push(pnt);			// ÇØ´ç ³ªÀÌÀÇ Å¥¿¡ »ğÀÔ
+			if (map[pnt.x][pnt.y] >= p) {	// ì–‘ë¶„ì´ ì¶©ë¶„í•œ ê²½ìš°
+				map[pnt.x][pnt.y] -= p;	// ì–‘ë¶„ ì„­ì·¨
+				pnt.l++;		// ë‚˜ì´ ì¦ê°€
+				q[pnt.l].push(pnt);	// í•´ë‹¹ ë‚˜ì´ì˜ íì— ì‚½ì…
 			}
-			else				// ¾çºĞÀÌ ºÎÁ·ÇÑ °æ¿ì
-				q[0].push(pnt);	// ³ª¹«°¡ Á×¾î 0¹øÂ° Å¥¿¡ »ğÀÔ
+			else			// ì–‘ë¶„ì´ ë¶€ì¡±í•œ ê²½ìš°
+				q[0].push(pnt);	// ë‚˜ë¬´ê°€ ì£½ì–´ 0ë²ˆì§¸ íì— ì‚½ì…
 		}
 	}
 }
@@ -41,12 +41,12 @@ void summer(void) {
 	while (qsize--) {
 		point pnt = q[0].front();
 		q[0].pop();
-		map[pnt.x][pnt.y] += pnt.l / 2;	// Á×Àº ³ª¹« ³ªÀÌÀÇ Àı¹İÀÌ ¾çºĞÀ¸·Î Ãß°¡
+		map[pnt.x][pnt.y] += pnt.l / 2;	// ì£½ì€ ë‚˜ë¬´ ë‚˜ì´ì˜ ì ˆë°˜ì´ ì–‘ë¶„ìœ¼ë¡œ ì¶”ê°€
 	}
 }
 
 void fall(void) {
-	// ³ªÀÌ°¡ 5ÀÇ ¹è¼öÀÎ ³ª¹«°¡ ¹ø½Ä
+	// ë‚˜ì´ê°€ 5ì˜ ë°°ìˆ˜ì¸ ë‚˜ë¬´ê°€ ë²ˆì‹
 	for (int p = 5; p < PRIORITY; p += 5) {
 		int qsize = q[p].size();
 		while (qsize--) {
@@ -55,15 +55,15 @@ void fall(void) {
 			for (int d = 0; d < 8; d++) {
 				int nx = pnt.x + dx[d], ny = pnt.y + dy[d];
 				if (0 <= nx && nx < N && 0 <= ny && ny < N)
-					q[1].push({ nx, ny, 1 });	// ¹ø½Ä °¡´ÉÇÑ À§Ä¡¿¡ ³ªÀÌ 1ÀÇ ³ª¹« ¹ø½Ä
+					q[1].push({ nx, ny, 1 });	// ë²ˆì‹ ê°€ëŠ¥í•œ ìœ„ì¹˜ì— ë‚˜ì´ 1ì˜ ë‚˜ë¬´ ë²ˆì‹
 			}
-			q[p].push(pnt);	// »õ·Î¿î ³ª¹«¸¦ ¹ø½Ä½ÃÅ² ³ª¹«¸¦ ´Ù½Ã Å¥¿¡ »ğÀÔ
+			q[p].push(pnt);	// ìƒˆë¡œìš´ ë‚˜ë¬´ë¥¼ ë²ˆì‹ì‹œí‚¨ ë‚˜ë¬´ë¥¼ ë‹¤ì‹œ íì— ì‚½ì…
 		}
 	}
 }
 
 void winter(void) {
-	// ¾çºĞ Ãß°¡
+	// ì–‘ë¶„ ì¶”ê°€
 	for (int x = 0; x < N; x++)
 		for (int y = 0; y < N; y++)
 			map[x][y] += A[x][y];
