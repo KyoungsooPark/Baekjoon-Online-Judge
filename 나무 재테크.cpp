@@ -71,6 +71,8 @@ void winter(void) {
 
 int main(void) {
 	int ans = 0;
+	
+	// 입력부
 	scanf("%d %d %d", &N, &M, &K);
 	for (int x = 0; x < N; x++) {
 		for (int y = 0; y < N; y++) {
@@ -83,10 +85,12 @@ int main(void) {
 		scanf("%d %d %d", &x, &y, &l);
 		q[l].push({ x - 1, y - 1, l });
 	}
-
+	
+	// 처리부
 	while (K--)
 		spring(), summer(), fall(), winter();
-
+	
+	// 출력부
 	for (int p = 1; p < PRIORITY; p++)
 		ans += q[p].size();
 	printf("%d\n", ans);
