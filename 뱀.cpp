@@ -8,7 +8,7 @@ using namespace std;
 typedef struct { int x, y; } snake;
 
 snake s[10001];	// 뱀 이동 시 head와 tail의 인덱스 변경
-char ctrl[10001];	// ctrl[t]: 시간 t에서 뱀 방향 전환
+char ctrl[10001];	// ctrl[t]: 시간 t에서 뱀의 회전 방향
 int map[102][102];
 int dx[4] = { 0, 1, 0, -1 };	// 시계 방향 회전 순서
 int dy[4] = { 1, 0, -1, 0 };	// 시계 방향 회전 순서
