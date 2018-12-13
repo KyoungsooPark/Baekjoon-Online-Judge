@@ -7,41 +7,41 @@ https://www.acmicpc.net/problem/3190
 using namespace std;
 typedef struct { int x, y; } snake;
 
-snake s[10001];
-char ctrl[10001];
+snake s[10001];	// ë±€ ì´ë™ ì‹œ headì™€ tailì˜ ì¸ë±ìŠ¤ ë³€ê²½
+char ctrl[10001];	// ctrl[t]: ì‹œê°„ tì—ì„œ ë±€ ë°©í–¥ ì „í™˜
 int map[102][102];
-int dx[4] = { 0, 1, 0, -1 };
-int dy[4] = { 1, 0, -1, 0 };
+int dx[4] = { 0, 1, 0, -1 };	// ì‹œê³„ ë°©í–¥ íšŒì „ ìˆœì„œ
+int dy[4] = { 1, 0, -1, 0 };	// ì‹œê³„ ë°©í–¥ íšŒì „ ìˆœì„œ
 int N, head, tail, dir, time = 0;
-
+// ë±€ ìœ„ì¹˜, head ë° tail ì¸ë±ìŠ¤ ì´ˆê¸°í™”, mapì˜ ë²½ ì„¤ì •
 void init(void) {
-	map[1][1] = 1;
 	s[0].x = s[0].y = 1;
 	head = tail = 0;
 	for (int i = 0; i <= N + 1; i++)
 		map[0][i] = map[N + 1][i] = map[i][0] = map[i][N + 1] = 1;
 }
-// ÇöÀç ½Ã°£ time ¿¡¼­ÀÇ Á¶ÀÛ ctrl¿¡ µû¶ó ¹ì ÀÌµ¿
+// í˜„ì¬ ì‹œê°„ time ì—ì„œì˜ ì¡°ì‘ ctrlì— ë”°ë¼ ë±€ ì´ë™
 bool move(void) {
+	if (map[s[head].x][s[head].y] == 1)
+		return false;
+	map[s[head].x][s[head].y] = 1;
 	switch (ctrl[time]) {
-	case 'L': dir == 0 ? dir = 3 : dir--; break;
-	case 'D': dir == 3 ? dir = 0 : dir++; break;
+	case 'L': dir == 0 ? dir = 3 : dir--; break;	// ì™¼ìª½ (ë°˜ì‹œê³„ ë°©í–¥) íšŒì „
+	case 'D': dir == 3 ? dir = 0 : dir++; break;	// ì˜¤ë¥¸ìª½ (ì‹œê³„ ë°©í–¥) íšŒì „
 	}
 	int nx = s[head].x + dx[dir], ny = s[head].y + dy[dir];
 	switch (map[nx][ny]) {
-	case 1:
-		return false;
-	case 0:	// ´ÙÀ½ À§Ä¡¿¡ ¾Æ¹«°Íµµ ¾ø´Â °æ¿ì ¸Ó¸®, ²¿¸® ¸ğµÎ ÀÌµ¿
-		map[s[tail].x][s[tail].y] = 0, tail++;	// ²¿¸® ÀÌµ¿
-	case 2:	// ´ÙÀ½ À§Ä¡¿¡ »ç°ú°¡ ÀÖ´Â °æ¿ì ¸Ó¸®¸¸ ÀÌµ¿
-		map[nx][ny] = 1, s[++head] = { nx, ny };	// ¸Ó¸® ÀÌµ¿
-		return true;
+	case 0:	// ë‹¤ìŒ ìœ„ì¹˜ì— ì•„ë¬´ê²ƒë„ ì—†ëŠ” ê²½ìš° ë¨¸ë¦¬, ê¼¬ë¦¬ ëª¨ë‘ ì´ë™
+		map[s[tail].x][s[tail].y] = 0, tail++;	// ê¼¬ë¦¬ ì´ë™ (break ì—†ì´ ë‹¤ìŒ case ìˆ˜í–‰)
+	case 2:	// ë‹¤ìŒ ìœ„ì¹˜ì— ì‚¬ê³¼ê°€ ìˆëŠ” ê²½ìš° ë¨¸ë¦¬ë§Œ ì´ë™
+		s[++head] = { nx, ny };	// ë¨¸ë¦¬ ì´ë™
 	}
+	return true;
 }
 
 int main(void) {
 	int K, L;
-	// ÀÔ·ÂºÎ
+	// ì…ë ¥ë¶€
 	scanf("%d", &N);
 	init();
 	scanf("%d", &K);
@@ -56,9 +56,9 @@ int main(void) {
 		scanf("%d %c", &t, &c);
 		ctrl[t] = c;
 	}
-	// Ã³¸®ºÎ
-	while (move()) ++time;
-	// Ãâ·ÂºÎ
-	printf("%d\n", ++time);
+	// ì²˜ë¦¬ë¶€
+	while (move()) time++;
+	// ì¶œë ¥ë¶€
+	printf("%d\n", time);
 	return 0;
 }
