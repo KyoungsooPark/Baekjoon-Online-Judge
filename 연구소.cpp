@@ -1,3 +1,7 @@
+/*
+https://www.acmicpc.net/problem/14502
+*/
+
 #include <cstdio>
 #include <queue>
 using namespace std;
@@ -14,11 +18,11 @@ int max(int a, int b) { return a >= b ? a : b; }
 int simulate(void) {
 	int cpy[8][8], ret = 0;
 	queue<point> q;
-	// map º¹»ç
+	// map ë³µì‚¬
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < M; j++)
 			cpy[i][j] = map[i][j];
-	// ¹ÙÀÌ·¯½º ÃÊ±â À§Ä¡ q¿¡ »ðÀÔ
+	// ë°”ì´ëŸ¬ìŠ¤ ì´ˆê¸° ìœ„ì¹˜ qì— ì‚½ìž…
 	for (const point &p : virus)
 		q.push(p);
 
@@ -29,13 +33,13 @@ int simulate(void) {
 			int nx = p.x + dx[d], ny = p.y + dy[d];
 			if (0 <= nx && nx < N && 0 <= ny && ny < M) {
 				if (cpy[nx][ny] == 0) {
-					cpy[nx][ny] = 2;	// ¹ÙÀÌ·¯½º Áõ½Ä
+					cpy[nx][ny] = 2;	// ë°”ì´ëŸ¬ìŠ¤ ì¦ì‹
 					q.push({ nx, ny });
 				}
 			}
 		}
 	}
-	// ¾ÈÀü ¿µ¿ª °è»ê
+	// ì•ˆì „ ì˜ì—­ ê³„ì‚°
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < M; j++)
 			if (cpy[i][j] == 0)
@@ -44,23 +48,23 @@ int simulate(void) {
 }
 
 void go(int x, int y, int n) {
-	map[x][y] = 1;	// º® ¼³Ä¡
+	map[x][y] = 1;	// ë²½ ì„¤ì¹˜
 
-	if (n == 3) {	// 3°³ÀÇ º®À» ¸ðµÎ ¼³Ä¡ÇÑ °æ¿ì
-		ans = max(ans, simulate());	// ÃÖ´ë ¾ÈÀü ¿µ¿ª °è»ê ÈÄ
-		map[x][y] = 0;	// º® Á¦°Å
+	if (n == 3) {	// 3ê°œì˜ ë²½ì„ ëª¨ë‘ ì„¤ì¹˜í•œ ê²½ìš°
+		ans = max(ans, simulate());	// ìµœëŒ€ ì•ˆì „ ì˜ì—­ ê³„ì‚° í›„
+		map[x][y] = 0;	// ë²½ ì œê±°
 		return;
 	}
 
 	for (int i = x; i < N; i++)
 		for (int j = i == x ? y + 1 : 0; j < M; j++)
-			if (map[i][j] == 0)	// º® ¼³Ä¡ °¡´É À§Ä¡ÀÎ °æ¿ì
-				go(i, j, n + 1);	// Àç±ÍÇÔ¼ö È£Ãâ
-	map[x][y] = 0;	// º® Á¦°Å
+			if (map[i][j] == 0)	// ë²½ ì„¤ì¹˜ ê°€ëŠ¥ ìœ„ì¹˜ì¸ ê²½ìš°
+				go(i, j, n + 1);	// ìž¬ê·€í•¨ìˆ˜ í˜¸ì¶œ
+	map[x][y] = 0;	// ë²½ ì œê±°
 }
 
 int main(void) {
-	// ÀÔ·ÂºÎ
+	// ìž…ë ¥ë¶€
 	scanf("%d %d", &N, &M);
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < M; j++) {
@@ -68,12 +72,12 @@ int main(void) {
 			if (map[i][j] == 2)
 				virus.push_back({ i, j });
 		}
-	// Ã³¸®ºÎ
+	// ì²˜ë¦¬ë¶€
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < M; j++)
 			if (map[i][j] == 0)
 				go(i, j, 1);
-	// Ãâ·ÂºÎ
+	// ì¶œë ¥ë¶€
 	printf("%d\n", ans);
 	return 0;
 }
