@@ -4,49 +4,43 @@ https://www.acmicpc.net/problem/14503
 
 #include <cstdio>
 using namespace std;
-typedef struct { int x, y, d, c; } cleaner;
 
-cleaner c;
 bool map[50][50], visited[50][50];
 int dx[4] = { -1, 0, 1, 0 };
 int dy[4] = { 0, 1, 0, -1 };
 int N, M, ans;
 
-void move(void) {
-	while (true) {
-		c.c = 0;
-		if (!visited[c.x][c.y]) {	// ÇöÀç À§Ä¡ Ã»¼Ò ¾ÈÇßÀ¸¸é Ã»¼Ò
-			ans++;
-			visited[c.x][c.y] = true;
-		}
-		do {	// ÇöÀç ¹æÇâÀ» ±âÁØÀ¸·Î ¿ŞÂÊ Å½»ö
-			c.d = c.d == 0 ? 3 : c.d - 1;
-			int nx = c.x + dx[c.d], ny = c.y + dy[c.d];
-			if (!map[nx][ny] && !visited[nx][ny])
-				break;
-		} while (++c.c < 4);
-		if (c.c < 4) {	// Ã»¼ÒÇÏÁö ¾ÊÀº °ø°£ Á¸Àç
-			c.x += dx[c.d], c.y += dy[c.d];	// ÇØ´ç À§Ä¡·Î ÀÌµ¿
-			continue;
-		}
-		int nd = (c.d + 2) % 4;
-		int nx = c.x + dx[nd], ny = c.y + dy[nd];
-		if (map[nx][ny])	// µÚÂÊ ¹æÇâÀÌ º®ÀÎ °æ¿ì ÁßÁö
-			break;
-		c.x = nx, c.y = ny;	// ÇÑ Ä­ ÈÄÁø
+void go(int x, int y, int d) {
+	if (!visited[x][y]) {	// í˜„ì¬ ìœ„ì¹˜ ì²­ì†Œ ì•ˆí–ˆìœ¼ë©´ ì²­ì†Œ
+		ans++;
+		visited[x][y] = true;
 	}
+	
+	for (int i = 0; i < 4; i++) {	// í˜„ì¬ ë°©í–¥ì„ ê¸°ì¤€ìœ¼ë¡œ ì™¼ìª½ íƒìƒ‰
+		d == 0 ? d = 3 : d--;
+		int nx = x + dx[d], ny = y + dy[d];
+		if (!map[nx][ny] && !visited[nx][ny]) {	// ì²­ì†Œí•˜ì§€ ì•Šì€ ê³µê°„ ì¡´ì¬
+			go(nx, ny, d);	// í•´ë‹¹ ìœ„ì¹˜ë¡œ ì´ë™
+			return;
+		}
+	}
+	int nd = (d + 2) % 4;
+	int nx = x + dx[nd], ny = y + dy[nd];
+	if (!map[nx][ny])	// ë’¤ìª½ ë°©í–¥ì´ ë²½ì´ ì•„ë‹ˆë©´
+		go(nx, ny, d);	// í›„ì§„
 }
 
 int main(void) {
-	// ÀÔ·ÂºÎ
+	// ì…ë ¥ë¶€
+	int x, y, d;
 	scanf("%d %d", &N, &M);
-	scanf("%d %d %d", &c.x, &c.y, &c.d);
+	scanf("%d %d %d", &x, &y, &d);
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < M; j++)
 			scanf("%d", &map[i][j]);
-	// Ã³¸®ºÎ
-	move();
-	// Ãâ·ÂºÎ
+	// ì²˜ë¦¬ë¶€
+	go(x, y, d);
+	// ì¶œë ¥ë¶€
 	printf("%d\n", ans);
 	return 0;
 }
