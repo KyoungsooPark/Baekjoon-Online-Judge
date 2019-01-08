@@ -1,5 +1,5 @@
 /*
-
+https://www.acmicpc.net/problem/14499
 */
 
 #include <cstdio>
@@ -13,42 +13,42 @@ int N, M, x, y, K;
 void move(int d) {
 	int nx = x + dx[d], ny = y + dy[d];
 	int *temp = ptr[TOP];
-	if (nx < 0 || N <= nx || ny < 0 || M <= ny)	// mapÀ» ³Ñ¾î°¥ °æ¿ì
-		return;	// ÇØ´ç ¸í·É ¹× Ãâ·Â ¹«½Ã
+	if (nx < 0 || N <= nx || ny < 0 || M <= ny)	// mapì„ ë„˜ì–´ê°ˆ ê²½ìš°
+		return;	// í•´ë‹¹ ëª…ë ¹ ë° ì¶œë ¥ ë¬´ì‹œ
 	switch (d) {
-	case 1:	// µ¿
+	case 1:	// ë™
 		ptr[TOP] = ptr[LEFT];
 		ptr[LEFT] = ptr[BOTTOM];
 		ptr[BOTTOM] = ptr[RIGHT];
 		ptr[RIGHT] = temp;
 		break;
-	case 2:	// ¼­
+	case 2:	// ì„œ
 		ptr[TOP] = ptr[RIGHT];
 		ptr[RIGHT] = ptr[BOTTOM];
 		ptr[BOTTOM] = ptr[LEFT];
 		ptr[LEFT] = temp;
 		break;
-	case 3:	// ºÏ
+	case 3:	// ë¶
 		ptr[TOP] = ptr[FRONT];
 		ptr[FRONT] = ptr[BOTTOM];
 		ptr[BOTTOM] = ptr[BACK];
 		ptr[BACK] = temp;
 		break;
-	case 4:	// ³²
+	case 4:	// ë‚¨
 		ptr[TOP] = ptr[BACK];
 		ptr[BACK] = ptr[BOTTOM];
 		ptr[BOTTOM] = ptr[FRONT];
 		ptr[FRONT] = temp;
 		break;
 	}
-	if (map[nx][ny]) {	// ÀÌµ¿ÇÑ Ä­¿¡ ¾²¿© ÀÖ´Â ¼ö°¡ 0ÀÌ ¾Æ´Ï¸é
-		*ptr[BOTTOM] = map[nx][ny];	// Ä­¿¡ ¾²¿© ÀÖ´Â ¼ö°¡ ÁÖ»çÀ§ÀÇ ¹Ù´Ú¸éÀ¸·Î º¹»ç
-		map[nx][ny] = 0;	// Ä­¿¡ ¾²¿© ÀÖ´Â ¼ö´Â 0ÀÌ µÊ
+	if (map[nx][ny]) {	// ì´ë™í•œ ì¹¸ì— ì“°ì—¬ ìžˆëŠ” ìˆ˜ê°€ 0ì´ ì•„ë‹ˆë©´
+		*ptr[BOTTOM] = map[nx][ny];	// ì¹¸ì— ì“°ì—¬ ìžˆëŠ” ìˆ˜ê°€ ì£¼ì‚¬ìœ„ì˜ ë°”ë‹¥ë©´ìœ¼ë¡œ ë³µì‚¬
+		map[nx][ny] = 0;	// ì¹¸ì— ì“°ì—¬ ìžˆëŠ” ìˆ˜ëŠ” 0ì´ ë¨
 	}
-	else	// ÀÌµ¿ÇÑ Ä­¿¡ ¾²¿© ÀÖ´Â ¼ö°¡ 0ÀÌ¸é
-		map[nx][ny] = *ptr[BOTTOM];	// ÁÖ»çÀ§ÀÇ ¹Ù´Ú¸é¿¡ ¾²¿© ÀÖ´Â ¼ö°¡ Ä­¿¡ º¹»ç
-	printf("%d\n", *ptr[TOP]);	// ÀÌµ¿ÇÒ ¶§¸¶´Ù ÁÖ»çÀ§ÀÇ À­ ¸é¿¡ ¾²¿© ÀÖ´Â ¼ö Ãâ·Â
-	x = nx, y = ny;	// ÁÖ»çÀ§ À§Ä¡ º¯°æ
+	else	// ì´ë™í•œ ì¹¸ì— ì“°ì—¬ ìžˆëŠ” ìˆ˜ê°€ 0ì´ë©´
+		map[nx][ny] = *ptr[BOTTOM];	// ì£¼ì‚¬ìœ„ì˜ ë°”ë‹¥ë©´ì— ì“°ì—¬ ìžˆëŠ” ìˆ˜ê°€ ì¹¸ì— ë³µì‚¬
+	printf("%d\n", *ptr[TOP]);	// ì´ë™í•  ë•Œë§ˆë‹¤ ì£¼ì‚¬ìœ„ì˜ ìœ— ë©´ì— ì“°ì—¬ ìžˆëŠ” ìˆ˜ ì¶œë ¥
+	x = nx, y = ny;	// ì£¼ì‚¬ìœ„ ìœ„ì¹˜ ë³€ê²½
 }
 
 int main(void) {
