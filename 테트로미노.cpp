@@ -9,61 +9,51 @@ int map[500][500];
 int N, M, ans = 0;
 
 int max(int a, int b) { return a >= b ? a : b; }
-// 1 x 4
-int onebyfour(int x, int y) { return y + 3 >= M ? -1 : map[x][y] + map[x][y + 1] + map[x][y + 2] + map[x][y + 3]; }
-// 4 x 1
-int fourbyone(int x, int y) { return x + 3 >= N ? -1 : map[x][y] + map[x + 1][y] + map[x + 2][y] + map[x + 3][y]; }
-// 2 x 2
-int twobytwo(int x, int y) { return x + 1 >= N || y + 1 >= M ? -1 : map[x][y] + map[x][y + 1] + map[x + 1][y] + map[x + 1][y + 1]; }
-// 2 x 3
-int twobythree(int x, int y) {
-	return x + 1 >= N || y + 2 >= M ? -1 :
-		max(
-			map[x][y] + map[x + 1][y] + map[x + 1][y + 1] + map[x + 1][y + 2],
-			max(
-				map[x][y + 2] + map[x + 1][y] + map[x + 1][y + 1] + map[x + 1][y + 2],
-				max(
-					map[x][y] + map[x][y + 1] + map[x][y + 2] + map[x + 1][y],
-					max(
-						map[x][y] + map[x][y + 1] + map[x][y + 2] + map[x + 1][y + 2],
-						max(
-							map[x][y] + map[x][y + 1] + map[x + 1][y + 1] + map[x + 1][y + 2],
-							max(
-								map[x][y + 1] + map[x][y + 2] + map[x + 1][y] + map[x + 1][y + 1],
-								max(
-									map[x][y + 1] + map[x + 1][y] + map[x + 1][y + 1] + map[x + 1][y + 2],
-									map[x][y] + map[x][y + 1] + map[x][y + 2] + map[x + 1][y + 1])))))));
+
+void calculate(int x, int y) {
+	if (y + 3 < M)	// 1 x 4
+		ans = max(ans, map[x][y] + map[x][y + 1] + map[x][y + 2] + map[x][y + 3]);
+	if (x + 3 < N)	// 4 x 1
+		ans = max(ans, map[x][y] + map[x + 1][y] + map[x + 2][y] + map[x + 3][y]);
+	if (x + 1 < N && y + 1 < M)	// 2 x 2
+		ans = max(ans, map[x][y] + map[x][y + 1] + map[x + 1][y] + map[x + 1][y + 1]);
+	if (x + 2 < N && y + 1 < M) {	// 3 x 2
+		ans = max(ans, map[x][y] + map[x + 1][y] + map[x + 2][y] + map[x + 2][y + 1]);
+		ans = max(ans, map[x][y + 1] + map[x + 1][y + 1] + map[x + 2][y + 1] + map[x + 2][y]);
+		ans = max(ans, map[x][y] + map[x][y + 1] + map[x + 1][y + 1] + map[x + 2][y + 1]);
+		ans = max(ans, map[x][y + 1] + map[x][y] + map[x + 1][y] + map[x + 2][y]);
+
+		ans = max(ans, map[x][y] + map[x + 1][y] + map[x + 1][y + 1] + map[x + 2][y + 1]);
+		ans = max(ans, map[x][y + 1] + map[x + 1][y + 1] + map[x + 1][y] + map[x + 2][y]);
+
+		ans = max(ans, map[x][y] + map[x + 1][y] + map[x + 1][y + 1] + map[x + 2][y]);
+		ans = max(ans, map[x][y + 1] + map[x + 1][y + 1] + map[x + 1][y] + map[x + 2][y + 1]);
+	}
+	if (x + 1 < N && y + 2 < M) {	// 2 x 3
+		ans = max(ans, map[x + 1][y] + map[x + 1][y + 1] + map[x + 1][y + 2] + map[x][y + 2]);
+		ans = max(ans, map[x + 1][y] + map[x][y] + map[x][y + 1] + map[x][y + 2]);
+		ans = max(ans, map[x][y] + map[x + 1][y] + map[x + 1][y + 1] + map[x + 1][y + 2]);
+		ans = max(ans, map[x][y] + map[x][y + 1] + map[x][y + 2] + map[x + 1][y + 2]);
+
+		ans = max(ans, map[x + 1][y] + map[x + 1][y + 1] + map[x][y + 1] + map[x][y + 2]);
+		ans = max(ans, map[x][y] + map[x][y + 1] + map[x + 1][y + 1] + map[x + 1][y + 2]);
+
+		ans = max(ans, map[x][y] + map[x][y + 1] + map[x + 1][y + 1] + map[x][y + 2]);
+		ans = max(ans, map[x + 1][y] + map[x + 1][y + 1] + map[x][y + 1] + map[x + 1][y + 2]);
+	}
 }
-// 3 x 2
-int threebytwo(int x, int y) {
-	return x + 2 >= N || y + 1 >= M ? -1 :
-		max(
-			map[x][y] + map[x + 1][y] + map[x + 2][y] + map[x + 2][y + 1],
-			max(
-				map[x][y + 1] + map[x + 1][y + 1] + map[x + 2][y] + map[x + 2][y + 1],
-				max(
-					map[x][y] + map[x][y + 1] + map[x + 1][y + 1] + map[x + 2][y + 1],
-					max(
-						map[x][y] + map[x][y + 1] + map[x + 1][y] + map[x + 2][y],
-						max(
-							map[x][y + 1] + map[x + 1][y] + map[x + 1][y + 1] + map[x + 2][y],
-							max(
-								map[x][y] + map[x + 1][y] + map[x + 1][y + 1] + map[x + 2][y + 1],
-								max(
-									map[x][y] + map[x + 1][y] + map[x + 1][y + 1] + map[x + 2][y],
-									map[x][y + 1] + map[x + 1][y] + map[x + 1][y + 1] + map[x + 2][y + 1])))))));
-}
+
 int main(void) {
-	// ÀÔ·ÂºÎ
+	// ìž…ë ¥ë¶€
 	scanf("%d %d", &N, &M);
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < M; j++)
 			scanf("%d", &map[i][j]);
-	// Ã³¸®ºÎ
+	// ì²˜ë¦¬ë¶€
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < M; j++)
-			ans = max(ans, max(onebyfour(i, j), max(fourbyone(i, j), max(twobytwo(i, j), max(twobythree(i, j), threebytwo(i, j))))));
-	// Ãâ·ÂºÎ
+			calculate(i, j);
+	// ì¶œë ¥ë¶€
 	printf("%d\n", ans);
 	return 0;
 }
