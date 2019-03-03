@@ -3,110 +3,124 @@ https://www.acmicpc.net/problem/15683
 */
 
 #include <cstdio>
-#include <queue>
+#include <vector>
 using namespace std;
-typedef struct { int x, y; } point;
+enum { R, D, L, U };	// ìš°: 0, í•˜: 1, ì¢Œ: 2, ìƒ: 3
+typedef struct { int x, y, d; } cctv;	// CCTV êµ¬ì¡°ì²´
 
-vector<point> cctv;
-int map[8][8], cpy[8][8], dir[8];
-int dx[4] = { 0, 0, -1, 1 };	// ÁÂ, ¿ì, »ó, ÇÏ
-int dy[4] = { 1, -1, 0, 0 };	// ÁÂ, ¿ì, »ó, ÇÏ
+vector<cctv> v;
+int map[8][8], cpy[8][8];	// ì´ˆê¸° ë§µ, ì‹œë®¬ë ˆì´ì…˜ì„ ìœ„í•œ ì¹´í”¼ ë§µ
 int N, M, ans = 2e9;
 
 int min(int a, int b) { return a <= b ? a : b; }
-
-void one(int x, int y, int d) {
-	while (true) {
-		x += dx[d], y += dy[d];
-		if (x < 0 || N <= x || y < 0 || M <= y) return;	// mapÀ» ¹ş¾î³ª´Â °æ¿ì
-		if (cpy[x][y] == 6) return;	// º®ÀÌ Á¸ÀçÇÏ´Â °æ¿ì
-		if (cpy[x][y] == 0)	// ºó Ä­ÀÎ °æ¿ì
-			cpy[x][y] = -1; // °¨½Ã °¡´É Ã¼Å©
+// ì˜¤ë¥¸ìª½ ê°ì‹œ ì˜ì—­ ì²´í¬
+void right(int x, int y) {
+	while (++y < M) {	//	ì˜¤ë¥¸ìª½: y ì¦ê°€
+		if (cpy[x][y] == 6)	return;	// ë²½ì¸ ê²½ìš° ì¢…ë£Œ
+		if (cpy[x][y] == 0)	cpy[x][y] = -1;	// ë¹ˆ ê³µê°„ì¸ ê²½ìš° ì²´í¬
 	}
 }
-
-void two(int x, int y, int d) {
-	switch (d) {
-	case 0: one(x, y, 0); one(x, y, 1); break;	// ÁÂ, ¿ì
-	case 1: one(x, y, 2); one(x, y, 3); break;	// »ó, ÇÏ
+// ì•„ë˜ìª½ ê°ì‹œ ì˜ì—­ ì²´í¬
+void down(int x, int y) {
+	while (++x < N) {	// ì•„ë˜ìª½: x ì¦ê°€
+		if (cpy[x][y] == 6)	return;	// ë²½ì¸ ê²½ìš° ì¢…ë£Œ
+		if (cpy[x][y] == 0)	cpy[x][y] = -1;	// ë¹ˆ ê³µê°„ì¸ ê²½ìš° ì²´í¬
 	}
 }
-
-void three(int x, int y, int d) {
-	switch (d) {
-	case 0: one(x, y, 0); one(x, y, 2); break;	// ¿ì, »ó
-	case 1: one(x, y, 0); one(x, y, 3); break;	// ¿ì, ÇÏ
-	case 2: one(x, y, 1); one(x, y, 2); break;	// ÁÂ, »ó
-	case 3: one(x, y, 1); one(x, y, 3); break;	// ÁÂ, ÇÏ
+// ì™¼ìª½ ê°ì‹œ ì˜ì—­ ì²´í¬
+void left(int x, int y) {
+	while (0 <= --y) {	// ì™¼ìª½: y ê°ì†Œ
+		if (cpy[x][y] == 6)	return;	// ë²½ì¸ ê²½ìš° ì¢…ë£Œ
+		if (cpy[x][y] == 0)	cpy[x][y] = -1;	// ë¹ˆ ê³µê°„ì¸ ê²½ìš° ì²´í¬
 	}
 }
-
-void four(int x, int y, int d) {
-	for (int i = 0; i < 4; i++)
-		if (i != d)	// d¸¦ Á¦¿ÜÇÑ ³ª¸ÓÁö ¼¼ ¹æÇâ
-			one(x, y, i);
+// ìœ„ìª½ ê°ì‹œ ì˜ì—­ ì²´í¬
+void up(int x, int y) {
+	while (0 <= --x) {	// ìœ„ìª½: x ê°ì†Œ
+		if (cpy[x][y] == 6)	return;	// ë²½ì¸ ê²½ìš° ì¢…ë£Œ
+		if (cpy[x][y] == 0)	cpy[x][y] = -1;	// ë¹ˆ ê³µê°„ì¸ ê²½ìš° ì²´í¬
+	}
 }
-
-void five(int x, int y) {
-	for (int i = 0; i < 4; i++)
-		one(x, y, i);	// ³× ¹æÇâ
+// CCTV ì¢…ë¥˜ ë³„ ê°ì‹œ ì˜ì—­ ì²´í¬
+void check(cctv c) {
+	switch (cpy[c.x][c.y]) {	// CCTV ì¢…ë¥˜
+	case 1:	// 1ë²ˆ: í•œ ë°©í–¥
+		switch (c.d) {
+		case R: right(c.x, c.y); break;
+		case D: down(c.x, c.y); break;
+		case L: left(c.x, c.y); break;
+		case U: up(c.x, c.y); break;
+		}
+		break;
+	case 2:	// 2ë²ˆ: ì„œë¡œ ë°˜ëŒ€ ë‘ ë°©í–¥
+		switch (c.d) {
+		case R: case L: right(c.x, c.y); left(c.x, c.y); break;	// â”€
+		case D: case U: down(c.x, c.y); up(c.x, c.y); break;	// â”‚
+		}
+		break;
+	case 3:	// 3ë²ˆ: ì§ê° ë‘ ë°©í–¥
+		switch (c.d) {
+		case R: up(c.x, c.y); right(c.x, c.y); break;	// â””
+		case D: right(c.x, c.y); down(c.x, c.y); break;	// â”Œ
+		case L: down(c.x, c.y); left(c.x, c.y); break;	// â”
+		case U: left(c.x, c.y); up(c.x, c.y); break;	// â”˜
+		}
+		break;
+	case 4:	// 4ë²ˆ: ì„¸ ë°©í–¥
+		switch (c.d) {
+		case R: up(c.x, c.y); right(c.x, c.y); down(c.x, c.y); break;	// â”œ
+		case D: right(c.x, c.y); down(c.x, c.y); left(c.x, c.y); break;	// â”¬
+		case L: down(c.x, c.y); left(c.x, c.y); up(c.x, c.y); break;	// â”¤
+		case U: left(c.x, c.y); up(c.x, c.y); right(c.x, c.y); break;	// â”´
+		}
+		break;
+	case 5:	// 5ë²ˆ: ë„¤ ë°©í–¥
+		right(c.x, c.y); down(c.x, c.y); left(c.x, c.y); up(c.x, c.y);	// â”¼
+		break;
+	}
 }
-
-int calculate(void) {
+// ì •í•´ì§„ ë°©í–¥ì— ëŒ€í•´ ëª¨ë“  CCTVì˜ ê°ì‹œ ì˜ì—­ ì²´í¬
+int simulation(void) {
 	int ret = 0;
-	// map º¹»ç
+	// ë§µ ì¹´í”¼
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < M; j++)
 			cpy[i][j] = map[i][j];
-	// ¸ğµç cctv¿Í ÇØ´ç dir¿¡ ´ëÇØ °Ë»ç
-	for (int i = 0; i < cctv.size(); i++) {
-		switch (map[cctv[i].x][cctv[i].y]) {
-		case 1: one(cctv[i].x, cctv[i].y, dir[i]); break;
-		case 2: two(cctv[i].x, cctv[i].y, dir[i]); break;
-		case 3: three(cctv[i].x, cctv[i].y, dir[i]); break;
-		case 4: four(cctv[i].x, cctv[i].y, dir[i]); break;
-		case 5: five(cctv[i].x, cctv[i].y); break;
-		}
-	}
-	// »ç°¢Áö´ë Ä«¿îÆ®
+	// CCTVì˜ ê°ì‹œ ì˜ì—­ ì²´í¬
+	for (cctv c : v)
+		check(c);
+	// ì‚¬ê° ì§€ëŒ€ í¬ê¸° ê³„ì‚°
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < M; j++)
-			if (cpy[i][j] == 0)
+			if (!cpy[i][j])
 				ret++;
 	return ret;
 }
-
+// CCTV ë°©í–¥ì˜ ëª¨ë“  ì¡°í•© íƒìƒ‰ì„ ìœ„í•œ dfs
 void go(int n) {
-	if (n == cctv.size()) {
-		ans = min(ans, calculate());
+	if (n == v.size()) {	// ëª¨ë“  CCTVì˜ ë°©í–¥ì´ ì •í•´ì§„ ê²½ìš°
+		ans = min(ans, simulation());	// ì‹œë®¬ë ˆì´ì…˜ì„ í†µí•œ ì‚¬ê° ì§€ëŒ€ í¬ê¸° ê³„ì‚°
 		return;
 	}
-	int num_case;
-	switch (map[cctv[n].x][cctv[n].y]) {
-	case 2: num_case = 2; break;	// cctv 2´Â »ó/ÇÏ ¶Ç´Â ÁÂ/¿ì µÎ °¡Áö ÄÉÀÌ½º
-	case 5: num_case = 1; break;	// cctv 5´Â Ç×»ó ³× ¹æÇâÀÌ¹Ç·Î ÇÑ °¡Áö ÄÉÀÌ½º
-	default: num_case = 4;			// ³ª¸ÓÁö cctv´Â ³× °¡Áö ÄÉÀÌ½º
-	}
-	for (int d = 0; d < num_case; d++) {
-		dir[n] = d;
+	// në²ˆì§¸ CCTVì˜ ë°©í–¥ ì§€ì •
+	for (int d = 0; d < 4; d++) {
+		v[n].d = d;
 		go(n + 1);
-		if (ans == 0)
-			return;
 	}
 }
 
 int main(void) {
-	// ÀÔ·ÂºÎ
+	// ì…ë ¥ë¶€
 	scanf("%d %d", &N, &M);
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < M; j++) {
 			scanf("%d", &map[i][j]);
-			if (0 < map[i][j] && map[i][j] < 6)
-				cctv.push_back({ i, j });
+			if (1 <= map[i][j] && map[i][j] <= 5)
+				v.push_back({ i, j, 0 });
 		}
-	// Ã³¸®ºÎ
+	// ì²˜ë¦¬ë¶€
 	go(0);
-	// Ãâ·ÂºÎ
+	// ì¶œë ¥ë¶€
 	printf("%d\n", ans);
 	return 0;
 }
