@@ -1,52 +1,57 @@
+/*
+https://www.acmicpc.net/problem/14888
+*/
+
 #include <cstdio>
 using namespace std;
+enum { SUM, SUB, MUL, DIV };
 
-int num[11], nOpt[4], order[10];
-int N, max, min;
+int num_arr[11], opt_cnt[4], opt_arr[10];
+int N, M = -1e9, m = 1e9;
+
+int max(int a, int b) { return a >= b ? a : b; }
+int min(int a, int b) { return a <= b ? a : b; }
 
 int calculate(void) {
-	// ¿¬»êÀÚ ¿ì¼± ¼øÀ§¿Í »ó°ü¾øÀÌ ¿ŞÂÊºÎÅÍ ¼ø¼­´ë·Î °è»ê
-	int ret = num[0];
-	for (int n = 1; n < N; n++) {
-		switch (order[n - 1]) {
-		case 0: ret += num[n]; break;
-		case 1: ret -= num[n]; break;
-		case 2: ret *= num[n]; break;
-		case 3: ret /= num[n]; break;
+	int ret = num_arr[0];
+	for (int i = 0; i < N - 1; i++) {
+		switch (opt_arr[i]) {
+		case SUM: ret += num_arr[i + 1]; break;
+		case SUB: ret -= num_arr[i + 1]; break;
+		case MUL: ret *= num_arr[i + 1]; break;
+		case DIV: ret /= num_arr[i + 1]; break;
 		}
 	}
 	return ret;
 }
 
 void go(int n) {
-	if (n == N - 1) {
-		int temp = calculate();
-		if (max < temp) max = temp;
-		if (min > temp) min = temp;
+	if (n == N - 1) {	// ëª¨ë“  ì—°ì‚°ì ì„ íƒ ì™„ë£Œ
+		int temp = calculate();	// ê²°ê³¼ ê³„ì‚°
+		M = max(M, temp), m = min(m, temp);
 		return;
 	}
 
-	for (int i = 0; i < 4; i++) {
-		if (nOpt[i]) {
-			order[n] = i;
-			nOpt[i]--;
-			go(n + 1);
-			nOpt[i]++;
+	for (int i = 0; i < 4; i++) {	// ë„¤ ê°€ì§€ ì—°ì‚°ì ì¤‘ íƒì¼
+		if (opt_cnt[i]) {	// í•´ë‹¹ ì—°ì‚°ìê°€ ë‚¨ì•„ìˆëŠ” ê²½ìš°
+			opt_cnt[i]--;	// ê°œìˆ˜ ì°¨ê°
+			opt_arr[n] = i;	// në²ˆì§¸ ìë¦¬ì— í•´ë‹¹ ì—°ì‚°ì ì„ íƒ
+			go(n + 1);	// ë‹¤ìŒ ìˆœì„œ ì§„í–‰
+			opt_cnt[i]++;	// ì—°ì‚°ì ë°˜í™˜
 		}
 	}
 }
 
 int main(void) {
-	// ÀÔ·ÂºÎ
+	// ì…ë ¥ë¶€
 	scanf("%d", &N);
-	for (int n = 0; n < N; n++)
-		scanf("%d", &num[n]);
-	for (int n = 0; n < 4; n++)
-		scanf("%d", &nOpt[n]);
-	// Ã³¸®ºÎ
-	max = -1e9, min = 1e9;
+	for (int i = 0; i < N; i++)
+		scanf("%d", &num_arr[i]);
+	for (int i = 0; i < 4; i++)
+		scanf("%d", &opt_cnt[i]);
+	// ì²˜ë¦¬ë¶€
 	go(0);
-	// Ãâ·ÂºÎ
-	printf("%d\n%d\n", max, min);
+	// ì¶œë ¥ë¶€
+	printf("%d\n%d\n", M, m);
 	return 0;
 }
