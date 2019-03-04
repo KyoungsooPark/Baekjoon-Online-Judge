@@ -5,49 +5,51 @@ https://www.acmicpc.net/problem/15686
 #include <cstdio>
 #include <vector>
 using namespace std;
-typedef struct { int r, c; } point;
-vector<point> house, chicken;
-vector<int> check;
-int N, M;
+typedef struct { int x, y; } point;
 
-int abs(int num) { return num >= 0 ? num : -num; }
+vector<point> house, chicken;
+bool check[13];
+int map[50][50];
+int N, M, ans = 2e9;
+
 int min(int a, int b) { return a <= b ? a : b; }
-int dist(int r1, int c1, int r2, int c2) { return abs(r1 - r2) + abs(c1 - c2); }
-int mindist(int r, int c) {	// ���� ª�� �Ÿ� ��ȯ
-	int ret = 2e9;
-	for (const int &i : check)
-		ret = min(ret, dist(r, c, chicken[i].r, chicken[i].c));
-	return ret;
+int abs(int num) { return num >= 0 ? num : -num; }
+int distance(point a, point b) { return abs(a.x - b.x) + abs(a.y - b.y); }
+
+void go(int n, int l) {	// n: 탐색한 치킨집 수, l: 선택한 치킨집 수
+	if (n == chicken.size()) {	// 모든 치킨집에 대해 탐색 완료
+		if (l == M) {	// 선택한 치킨집의 수가 M이면 최소 치킨 거리 계산
+			int sum = 0;	// 모든 집과 선택된 치킨집의 치킨 거리 누적합산 변수
+			for (int i = 0; i < house.size(); i++) {
+				int temp = 2e9;	// i번째 집의 최소 치킨 거리 저장 변수
+				for (int j = 0; j < chicken.size(); j++)
+					if (check[j])	// j번째 치킨집이 선택된 경우
+						// i번째 집과 j번째 치킨집의 거리 계산
+						temp = min(temp, distance(house[i], chicken[j]));
+				sum += temp;
+			}
+			ans = min(ans, sum);
+		}
+		return;
+	}
+	check[n] = true; go(n + 1, l + 1);	// n번째 치킨집 선택
+	check[n] = false; go(n + 1, l);		// n번째 치킨집 탈락
 }
 
 int main(void) {
-	int ans = 2e9;
-	// �Էº�
+	// 입력부
 	scanf("%d %d", &N, &M);
-	for (int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++)
 		for (int j = 0; j < N; j++) {
-			int temp;
-			scanf("%d", &temp);
-			switch (temp) {
-			case 1: house.push_back({ i, j }); break;
-			case 2: chicken.push_back({ i, j }); break;
-			}
+			scanf("%d", &map[i][j]);
+			if (map[i][j] == 1) // 집
+				house.push_back({ i, j });
+			else if (map[i][j] == 2) // 치킨집
+				chicken.push_back({ i, j });
 		}
-	}
-	// ó����
-	for (int i = 0; i < (1 << chicken.size()); i++) {
-		for (int j = 0; j < chicken.size(); j++)
-			if (i & (1 << j))
-				check.push_back(j);
-		if (check.size() == M) {
-			int temp = 0;
-			for (const point &h : house)
-				temp += mindist(h.r, h.c);
-			ans = min(ans, temp);
-		}
-		check.clear();
-	}
-	// ��º�
+	// 처리부
+	go(0, 0);
+	// 출력부
 	printf("%d\n", ans);
 	return 0;
 }
