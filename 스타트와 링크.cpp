@@ -1,3 +1,7 @@
+/*
+https://www.acmicpc.net/problem/14889
+*/
+
 #include <cstdio>
 using namespace std;
 
@@ -6,46 +10,43 @@ int S[20][20];
 int N, ans = 2e9;
 
 int min(int a, int b) { return a <= b ? a : b; }
+int abs(int num) { return num >= 0 ? num : -num; }
 
 int calculate(void) {
-	int ret = 0;
+	int start = 0, link = 0;
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			if (check[i] != check[j])
-				continue;
-			if (check[i])
-				ret += S[i][j];
-			else
-				ret -= S[i][j];
+			if (check[i] && check[j])
+				start += S[i][j];
+			else if (!check[i] && !check[j])
+				link += S[i][j];
 		}
 	}
-	return ret >= 0 ? ret : -ret;
+	return abs(start - link);
 }
 
-void go(int cur, int n) {
+void go(int n, int cur) {
 	if (n == N / 2) {
 		ans = min(ans, calculate());
 		return;
 	}
-	// nC(n/2) Á¶ÇÕ
-	for (int i = cur; i <= N / 2 + n; i++) {
+	for (int i = cur; i <= N / 2 + n; i++) {	// N_Combination_(N/2)
 		check[i] = true;
-		go(i + 1, n + 1);
+		go(n + 1, i + 1);
 		check[i] = false;
-		if (ans == 0)	// 0ÀÎ °æ¿ì ³ª¸ÓÁö Å½»ö Á¾·á
-			return;
+		if (ans == 0) return;	// ì°¨ì´ê°€ 0ì¸ ê²½ìš° ë” íƒìƒ‰í•˜ì§€ ì•Šê³  ì¢…ë£Œ
 	}
 }
 
 int main(void) {
-	// ÀÔ·ÂºÎ
+	// ìž…ë ¥ë¶€
 	scanf("%d", &N);
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < N; j++)
 			scanf("%d", &S[i][j]);
-	// Ã³¸®ºÎ
+	// ì²˜ë¦¬ë¶€
 	go(0, 0);
-	// Ãâ·ÂºÎ
+	// ì¶œë ¥ë¶€
 	printf("%d\n", ans);
 	return 0;
 }
