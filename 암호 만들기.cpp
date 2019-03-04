@@ -1,46 +1,5 @@
 /*
 https://www.acmicpc.net/problem/1759
-¹®Á¦:
-	¹Ù·Î ¾îÁ¦ ÃÖ¹éÁØ Á¶±³°¡ ¹æ ¿­¼è¸¦ ÁÖ¸Ó´Ï¿¡ ³ÖÀº Ã¤ ±ôºıÇÏ°í ¼­¿ï·Î °¡ ¹ö¸®´Â
-	È²´çÇÑ »óÈ²¿¡ Á÷¸éÇÑ Á¶±³µéÀº, 702È£¿¡ »õ·Î¿î º¸¾È ½Ã½ºÅÛÀ» ¼³Ä¡ÇÏ±â·Î ÇÏ¿´´Ù.
-	ÀÌ º¸¾È ½Ã½ºÅÛÀº ¿­¼è°¡ ¾Æ´Ñ ¾ÏÈ£·Î µ¿ÀÛÇÏ°Ô µÇ¾î ÀÖ´Â ½Ã½ºÅÛÀÌ´Ù.
-	
-	¾ÏÈ£´Â ¼­·Î ´Ù¸¥ L°³ÀÇ ¾ËÆÄºª ¼Ò¹®ÀÚµé·Î ±¸¼ºµÇ¸ç ÃÖ¼Ò ÇÑ °³ÀÇ ¸ğÀ½°ú ÃÖ¼Ò µÎ °³ÀÇ ÀÚÀ½À¸·Î
-	±¸¼ºµÇ¾î ÀÖ´Ù°í ¾Ë·ÁÁ® ÀÖ´Ù. ¶ÇÇÑ Á¤·ÄµÈ ¹®ÀÚ¿­À» ¼±È£ÇÏ´Â Á¶±³µéÀÇ ¼ºÇâÀ¸·Î ¹Ì·ç¾î º¸¾Æ
-	¾ÏÈ£¸¦ ÀÌ·ç´Â ¾ËÆÄºªÀÌ ¾ÏÈ£¿¡¼­ Áõ°¡ÇÏ´Â ¼ø¼­·Î ¹è¿­µÇ¾úÀ» °ÍÀÌ¶ó°í ÃßÃøµÈ´Ù.
-	Áï, abc´Â °¡´É¼ºÀÌ ÀÖ´Â ¾ÏÈ£ÀÌÁö¸¸ bac´Â ±×·¸Áö ¾Ê´Ù.
-	
-	»õ º¸¾È ½Ã½ºÅÛ¿¡¼­ Á¶±³µéÀÌ ¾ÏÈ£·Î »ç¿ëÇßÀ» ¹ıÇÑ ¹®ÀÚÀÇ Á¾·ù´Â C°¡Áö°¡ ÀÖ´Ù°í ÇÑ´Ù.
-	ÀÌ ¾ËÆÄºªÀ» ÀÔ¼öÇÑ ¹Î½Ä, ¿µ½Ä ÇüÁ¦´Â Á¶±³µéÀÇ ¹æ¿¡ Ä§ÅõÇÏ±â À§ÇØ ¾ÏÈ£¸¦ ÃßÃøÇØ º¸·Á°í ÇÑ´Ù.
-	C°³ÀÇ ¹®ÀÚµéÀÌ ¸ğµÎ ÁÖ¾îÁ³À» ¶§, °¡´É¼º ÀÖ´Â ¾ÏÈ£µéÀ» ¸ğµÎ ±¸ÇÏ´Â ÇÁ·Î±×·¥À» ÀÛ¼ºÇÏ½Ã¿À.
-
-ÀÔ·Â:
-	Ã¹Â°ÁÙ¿¡ µÎ Á¤¼ö L, C°¡ ÁÖ¾îÁø´Ù. (3 ¡Â L ¡Â C ¡Â 15)
-	´ÙÀ½ ÁÙ¿¡´Â C°³ÀÇ ¹®ÀÚµéÀÌ °ø¹éÀ¸·Î ±¸ºĞµÇ¾î ÁÖ¾îÁø´Ù.
-	ÁÖ¾îÁö´Â ¹®ÀÚµéÀº ¾ËÆÄºª ¼Ò¹®ÀÚÀÌ¸ç, Áßº¹µÇ´Â °ÍÀº ¾ø´Ù.
-
-Ãâ·Â:
-	°¢ ÁÙ¿¡ ÇÏ³ª¾¿, »çÀü½ÄÀ¸·Î °¡´É¼º ÀÖ´Â ¾ÏÈ£¸¦ ¸ğµÎ Ãâ·ÂÇÑ´Ù.
-
-¿¹Á¦ ÀÔ·Â:
-	4 6
-	a t c i s w
-
-¿¹Á¦ Ãâ·Â:
-	acis
-	acit
-	aciw
-	acst
-	acsw
-	actw
-	aist
-	aisw
-	aitw
-	astw
-	cist
-	cisw
-	citw
-	istw
 */
 
 #include <iostream>
@@ -49,84 +8,39 @@ https://www.acmicpc.net/problem/1759
 #include <string>
 using namespace std;
 
-// password°¡ À¯È¿ÇÑÁö check
-int isvalid(string password) {
-	int ja = 0, mo = 0;
-	for (char x : password) {
-		if (x == 'a' || x == 'e' || x == 'i' || x == 'o' || x == 'u')
-			mo++;
+int L, C;
+vector<char> v(15);
+
+bool isvalid(string s) {
+	int j = 0, m = 0;
+	for (char c : s) {
+		if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
+			m++;	// ëª¨ìŒ ê°œìˆ˜ ì¦ê°€
 		else
-			ja++;
+			j++;	// ììŒ ê°œìˆ˜ ì¦ê°€
 	}
-	return ja >= 2 && mo >= 1;
+	return j >= 2 && m >= 1;	// ììŒ 2ê°œ ì´ìƒ, ëª¨ìŒ 1ê°œ ì´ìƒ ì¡°ê±´ ë§Œì¡± ì—¬ë¶€ ë°˜í™˜
 }
 
-/*
-a		: »ç¿ëÇÒ ¼ö ÀÖ´Â ¾ËÆÄºª (ÀÔ·Â)
-l		: ¸¸µé¾î¾ß ÇÏ´Â ¾ÏÈ£ÀÇ ±æÀÌ (ÀÔ·Â)
-password: ÇöÀç±îÁö ¸¸µç ¾ÏÈ£
-i		: »ç¿ëÇÒÁö ¸»Áö °áÁ¤ÇØ¾ß ÇÏ´Â ¾ËÆÄºªÀÇ ÀÎµ¦½º
-*/
-void go(vector<char> &a, string password, int l, int i) {
-	// ¸ğµç Å½»öÀ» ¸¶Ä£ °æ¿ì
-	if (i == a.size()) {
-		// ¾ÏÈ£°¡ À¯È¿ÇÑ °æ¿ì
-		if (password.length() == l && isvalid(password)) {
-			cout << password << endl;
-		}
+void go(int i, string s) {
+	if (i == C) {
+		if (s.length() == L && isvalid(s))	// ì¡°í•©í•œ ì•”í˜¸ê°€ ê¸¸ì´ì™€ ììŒ, ëª¨ìŒ ì¡°ê±´ì„ ë§Œì¡±
+			cout << s << endl;	// ê°€ëŠ¥ì„± ìˆëŠ” ì•”í˜¸ ì¶œë ¥
 		return;
 	}
-
-	// ´ÙÀ½ °æ¿ì È£Ãâ
-	go(a, password + a[i], l, i + 1); // ÇöÀç ÀÎµ¦½ºÀÇ ¾ËÆÄºªÀ» »ç¿ëÇÏ´Â °æ¿ì
-	go(a, password, l, i + 1); // ÇöÀç ÀÎµ¦½ºÀÇ ¾ËÆÄºªÀ» »ç¿ë ¾ÈÇÏ´Â °æ¿ì
+	go(i + 1, s + v[i]);	// ië²ˆì§¸ ì•ŒíŒŒë²³ ì„ íƒ
+	go(i + 1, s);	// ië²ˆì§¸ ì•ŒíŒŒë²³ íƒˆë½
 }
 
 int main(void) {
-	int l, c;
-	cin >> l >> c;
-	vector<char> a(c);
-	for (int i = 0; i < c; i++)
-		cin >> a[i];
-	sort(a.begin(), a.end());
-	go(a, "", l, 0);
+	// ì…ë ¥ë¶€
+	cin >> L >> C;
+	for (int i = 0; i < C; i++)
+		cin >> v[i];
+
+	// ì²˜ë¦¬ë¶€
+	sort(v.begin(), v.begin() + C);
+	go(0, "");
 
 	return 0;
 }
-
-//#include <iostream>
-//#include <algorithm>
-//#include <string>
-//using namespace std;
-//
-//int isvalid(string password) {
-//	int ja = 0, mo = 0;
-//	for (char x : password) {
-//		if (x == 'a' || x == 'e' || x == 'i' || x == 'o' || x == 'u')
-//			mo++;
-//		else
-//			ja++;
-//	}
-//	return ja >= 2 && mo >= 1;
-//}
-//
-//void go(char a[], int n, string password, int l, int i) {
-//	if (i == n) {
-//		if (password.length() == l && isvalid(password))
-//			cout << password << endl;
-//		return;
-//	}
-//	go(a, n, password + a[i], l, i + 1);
-//	go(a, n, password, l, i + 1);
-//}
-//
-//int main(void) {
-//	int l, n;
-//	char a[15];
-//	cin >> l >> n;
-//	for (int i = 0; i < n; i++)
-//		cin >> a[i];
-//	sort(a, a + n);
-//	go(a, n, "", l, 0);
-//	return 0;
-//}
