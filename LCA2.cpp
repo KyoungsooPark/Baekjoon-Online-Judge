@@ -6,67 +6,66 @@ https://www.acmicpc.net/problem/11438
 #include <vector>
 #define MAX_NODE 100001
 #define MAX_LEVEL	16
-// MAX_NODEëŠ” 100,000 ì´ê³ , 2^16 = 65,536, 2^17 = 131,072 ì´ë¯€ë¡œ
-// max_levelì„ 17ë¡œ ì„¤ì •í•˜ë©´ depthê°€ ê°€ì¥ í° ìµœì•…ì˜ ê²½ìš°ë¼ë„ (ëª¨ë“  ë…¸ë“œì˜ ìì‹ì´ 1ê°œì¸ í¸í–¥ íŠ¸ë¦¬)
-// 17ë²ˆì§¸ ì¡°ìƒ íƒìƒ‰ ì‹œ ë£¨íŠ¸ ë…¸ë“œë¥¼ ë„˜ì–´ê°€ ë²„ë¦¼. ë”°ë¼ì„œ max_level = log_2(100,000) ë³´ë‹¤ ì‘ì€ ì •ìˆ˜ì¸ 16ì´ ìµœëŒ“ê°’ì´ë‹¤.
+// ÃÖ´ë ³ëµå °³¼ö´Â 100,000 ÀÌ°í, 2^16 = 65,536, 2^17 = 131,072 ÀÌ¹Ç·Î
+// MAX_LEVELÀ» 17·Î ¼³Á¤ÇÏ¸é depth°¡ °¡Àå Å« ÃÖ¾ÇÀÇ °æ¿ì¶óµµ (¸ğµç ³ëµåÀÇ ÀÚ½ÄÀÌ 1°³ÀÎ ÆíÇâ Æ®¸®)
+// 17¹øÂ° Á¶»ó Å½»ö ½Ã ·çÆ® ³ëµå¸¦ ³Ñ¾î°¡ ¹ö¸² (131,072 > 100,000)
+// µû¶ó¼­ 50,000 >= log_2(MAX_LEVEL)¸¦ ¸¸Á·ÇÏ´Â 15À¸·Î ¼³Á¤
 using namespace std;
 
-vector<int> graph[MAX_NODE];	// graph[x] :: xì™€ ì—°ê²°ëœ ëª¨ë“  ë…¸ë“œ. graph[x][i] :: xì™€ ì—°ê²°ëœ ië²ˆì§¸ ë…¸ë“œ
-int depth[MAX_NODE];	// depth[x] :: ë…¸ë“œ xì˜ depth
-int ac[MAX_NODE][MAX_LEVEL + 1];	// ac[x][y] :: xì˜ 2^yë²ˆì§¸ ì¡°ìƒì„ ì˜ë¯¸
+vector<int> graph[MAX_NODE];	// graph[x] = x¿Í ¿¬°áµÈ ¸ğµç ³ëµå. graph[x][i] = x¿Í ¿¬°áµÈ i¹øÂ° ³ëµå
+int depth[MAX_NODE];	// depth[x] = ³ëµå xÀÇ depth
+int ancestor[MAX_NODE][MAX_LEVEL + 1];	// ancestor[x][y] = xÀÇ 2^y¹øÂ° Á¶»ó
 
 void swap(int &a, int &b) { int tmp = a; a = b; b = tmp; }
-// graphë¥¼ ì´ìš©í•˜ì—¬ tree ë§Œë“¤ê¸°
+// graph¸¦ ÀÌ¿ëÇÏ¿© tree ¸¸µé±â
 void getTree(int here, int parent) {
 	depth[here] = depth[parent] + 1;
-	ac[here][0] = parent;	// hereì˜ 2^(0)ë²ˆì§¸ ì¡°ìƒ, ì¦‰ hereì˜ ì²« ë²ˆì§¸ ì¡°ìƒ
+	ancestor[here][0] = parent;	// hereÀÇ 2^(0)¹øÂ° Á¶»ó, Áï hereÀÇ ºÎ¸ğ
 	
+	// ancestor array ±¸¼º
 	for (int i = 1; i <= MAX_LEVEL; i++) {
-		// tmp :: hereì˜ 2^(i-1)ë²ˆì§¸ ì¡°ìƒ
-		// hereì˜ 2^(i)ë²ˆì§¸ ì¡°ìƒ = tmpì˜ 2^(i-1)ë²ˆì§¸ ì¡°ìƒ. ì¦‰, ac[here][i] = ac[tmp][i-1]
-		// ex) hereì˜ 8ë²ˆì§¸ ì¡°ìƒ = tmp(hereì˜ 4ë²ˆì§¸ ì¡°ìƒ)ì˜ 4ë²ˆì§¸ ì¡°ìƒ
-		int tmp = ac[here][i - 1];
-		ac[here][i] = ac[tmp][i - 1];	
+		int tmp = ancestor[here][i - 1];	// tmp = hereÀÇ 2^(i-1)¹øÂ° Á¶»ó
+		// hereÀÇ 2^(i)¹øÂ° Á¶»ó = tmpÀÇ 2^(i-1)¹øÂ° Á¶»ó
+		// ex) hereÀÇ 2¹øÂ° Á¶»ó = tmp(hereÀÇ 1¹øÂ° Á¶»ó)ÀÇ 1¹øÂ° Á¶»ó
+		ancestor[here][i] = ancestor[tmp][i - 1];
 	}
-
+	// hereÀÇ ÀÚ½Ä ³ëµå¿¡ ´ëÇØ Àç±Í È£Ãâ
 	for (int i = 0; i < graph[here].size(); i++) {
-		// there :: xì™€ ì—°ê²°ëœ ië²ˆì§¸ ë…¸ë“œ
-		// ex) 1ì´ ë£¨íŠ¸ ë…¸ë“œì´ê³ , 2ì™€ 3ì€ 1ì˜ ìì‹ ë…¸ë“œ, 4ì™€ 6ì€ 2ì˜ ìì‹ ë…¸ë“œì¼ ë•Œ,
-		//		graph[1] :: { 2, 3 }
-		//		graph[2] :: { 1, 4, 6 }
-		//		graph[3] :: { 1 } 
-		// ì´ë¯€ë¡œ, here = 1, there = 2ì—ì„œ getTree(2, 1) ì¬ê·€ í˜¸ì¶œ ì‹œ there(1) = parent(1)ì¸ ê²½ìš°ëŠ” ì œì™¸
-		int there = graph[here][i];
+		int there = graph[here][i]; // there = here¿Í ¿¬°áµÈ i¹øÂ° ³ëµå
 		if (there != parent)
+			// ex) 1ÀÌ ·çÆ®ÀÌ°í, 2¿Í 3Àº 1ÀÇ ÀÚ½Ä, 4¿Í 5´Â 2ÀÇ ÀÚ½ÄÀÌ¸é
+			//		graph[1] = { 2, 3 }
+			//		graph[2] = { 1, 4, 5 }
+			//		graph[3] = { 1, ... } ÀÌ°í,
+			//     here = 2, there = 1ÀÏ ¶§ there´Â hereÀÇ ºÎ¸ğÀÌ¹Ç·Î Á¦¿Ü
 			getTree(there, here);
 	}
 }
-
+// ÃÖ¼Ò °øÅë Á¶»ó Å½»ö
 int lca(int a, int b) {
-	// depth[a]ì™€ depth[b]ê°€ ê°™ì§€ ì•Šìœ¼ë©´ depth[b]ë¥¼ ë§ì¶°ì¤Œ
+	// depth[a]¿Í depth[b]°¡ °°Áö ¾ÊÀ¸¸é depth[b]¸¦ ¸ÂÃçÁÜ
 	if (depth[a] != depth[b]) {
 		if (depth[a] > depth[b])
 			swap(a, b);
 		for (int i = MAX_LEVEL; i >= 0; i--)
-			if (depth[a] <= depth[ac[b][i]])
-				b = ac[b][i];
+			if (depth[a] <= depth[ancestor[b][i]])
+				b = ancestor[b][i];
 	}
-	// aì™€ bê°€ ê°™ì€ ìˆ˜ì´ë©´ ìê¸° ìì‹  ë¦¬í„´
-	if (a == b)
-		return a;
-	// aì™€ bê°€ ê°™ì§€ ì•Šìœ¼ë©´ ë‘ ë…¸ë“œì˜ ê³µí†µ ì¡°ìƒì„ ì°¾ì•„ ì˜¬ë¼ê°
-	for (int i = MAX_LEVEL; i >= 0; i--) {
-		// ë‘ ë…¸ë“œì˜ ì¡°ìƒì´ ê°™ì§€ ì•Šìœ¼ë©´ ê°™ì•„ì§ˆ ë•Œê¹Œì§€ ì˜¬ë¼ê°
-		if (ac[a][i] != ac[b][i])
-			a = ac[a][i], b = ac[b][i];
-	}
-	return ac[a][0];	// ê³µí†µ ì¡°ìƒ ë¦¬í„´
+	// a¿Í b°¡ °°Àº ¼öÀÌ¸é ÀÚ±â ÀÚ½Å ¸®ÅÏ. ex) ÆíÇâ Æ®¸®¿¡¼­ LCA
+	if (a == b) return a;
+	// a¿Í b°¡ °°Áö ¾ÊÀ¸¸é µÎ ³ëµåÀÇ °øÅë Á¶»óÀ» Ã£¾Æ ÀÌµ¿
+	for (int i = MAX_LEVEL; i >= 0; i--)
+		// µÎ ³ëµåÀÇ Á¶»óÀÌ °°Áö ¾ÊÀ¸¸é °°¾ÆÁú ¶§±îÁö ÀÌµ¿
+		if (ancestor[a][i] != ancestor[b][i])
+			a = ancestor[a][i], b = ancestor[b][i];
+    
+	return ancestor[a][0];	// °øÅë Á¶»ó ¸®ÅÏ
 }
 
 int main() {
 	int N, M;
 	scanf("%d", &N);
-	// graph ë§Œë“¤ê¸°
+	// graph ¸¸µé±â
 	while (--N) {
 		int from, to;
 		scanf("%d %d", &from, &to);
