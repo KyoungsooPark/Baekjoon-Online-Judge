@@ -9,7 +9,7 @@ https://www.acmicpc.net/problem/11438
 // 최대 노드 개수는 100,000 이고, 2^16 = 65,536, 2^17 = 131,072 이므로
 // MAX_LEVEL을 17로 설정하면 depth가 가장 큰 최악의 경우라도 (모든 노드의 자식이 1개인 편향 트리)
 // 17번째 조상 탐색 시 루트 노드를 넘어가 버림 (131,072 > 100,000)
-// 따라서 50,000 >= log_2(MAX_LEVEL)를 만족하는 15으로 설정
+// 따라서 100,000 >= log_2(MAX_LEVEL)를 만족하는 16으로 설정
 using namespace std;
 
 vector<int> graph[MAX_NODE];	// graph[x] = x와 연결된 모든 노드. graph[x][i] = x와 연결된 i번째 노드
