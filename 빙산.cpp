@@ -25,8 +25,8 @@ void go(int x, int y) {
 // 빙산의 군집 개수 반환
 int cluster(void) {
 	int ret = 0;
-	for (int i = 0; i < N; i++)
-		for (int j = 0; j < M; j++)
+	for (int i = 1; i < N - 1; i++)
+		for (int j = 1; j < M - 1; j++)
 			if (map[cur][i][j] && !check[i][j]) {
 				go(i, j);
 				ret++;
