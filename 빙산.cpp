@@ -63,9 +63,10 @@ int main(void) {
 		int size = q.size();
 		int next = (cur + 1) % 2;
 
-		if (cluster() > 1)	// 빙산 군집 개수 확인
-			break;
-
+		if (cluster() > 1) {	// 빙산이 둘 이상으로 분리된 경우
+			printf("%d\n", ans); // 소요 시간 출력 후
+			return 0;	// 종료
+		}
 		while (size--) {	// 세대(generation) 단위 수행
 			point p = q.front(); q.pop();
 			int cnt = count(p);	// 빙산이 녹는 양
@@ -81,7 +82,7 @@ int main(void) {
 		cur = next;	// cur을 갱신된 맵의 인덱스로 업데이트
 		ans++;	// 시간 증가
 	}
-	// 출력부
-	printf("%d\n", cluster() > 1 ? ans : 0);
+
+	printf("0\n");	// 모두 녹을 때까지 빙산이 분리되지 않음
 	return 0;
 }
