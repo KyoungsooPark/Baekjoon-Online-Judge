@@ -1,64 +1,55 @@
-/*
-https://www.acmicpc.net/problem/3190
-*/
-
 #include <cstdio>
-#include <queue>
+#include <deque>
 using namespace std;
+enum { EMPTY, APPLE, OVER };
 typedef struct { int x, y; } snake;
 
-snake s[10001];	// ë±€ ì´ë™ ì‹œ headì™€ tailì˜ ì¸ë±ìŠ¤ ë³€ê²½
-char ctrl[10001];	// ctrl[t]: ì‹œê°„ tì—ì„œ ë±€ì˜ íšŒì „ ë°©í–¥
+deque<snake> s;
+char turn[10001];
 int map[102][102];
-int dx[4] = { 0, 1, 0, -1 };	// ì‹œê³„ ë°©í–¥ íšŒì „ ìˆœì„œ
-int dy[4] = { 1, 0, -1, 0 };	// ì‹œê³„ ë°©í–¥ íšŒì „ ìˆœì„œ
-int N, head, tail, dir, time = 0;
-// ë±€ ìœ„ì¹˜, head ë° tail ì¸ë±ìŠ¤ ì´ˆê¸°í™”, mapì˜ ë²½ ì„¤ì •
-void init(void) {
-	s[0].x = s[0].y = 1;
-	head = tail = 0;
-	for (int i = 0; i <= N + 1; i++)
-		map[0][i] = map[N + 1][i] = map[i][0] = map[i][N + 1] = 1;
-}
-// í˜„ì¬ ì‹œê°„ time ì—ì„œì˜ ì¡°ì‘ ctrlì— ë”°ë¼ ë±€ ì´ë™
-bool move(void) {
-	if (map[s[head].x][s[head].y] == 1)
-		return false;
-	map[s[head].x][s[head].y] = 1;
-	switch (ctrl[time]) {
-	case 'L': dir == 0 ? dir = 3 : dir--; break;	// ì™¼ìª½ (ë°˜ì‹œê³„ ë°©í–¥) íšŒì „
-	case 'D': dir == 3 ? dir = 0 : dir++; break;	// ì˜¤ë¥¸ìª½ (ì‹œê³„ ë°©í–¥) íšŒì „
-	}
-	int nx = s[head].x + dx[dir], ny = s[head].y + dy[dir];
-	switch (map[nx][ny]) {
-	case 0:	// ë‹¤ìŒ ìœ„ì¹˜ì— ì•„ë¬´ê²ƒë„ ì—†ëŠ” ê²½ìš° ë¨¸ë¦¬, ê¼¬ë¦¬ ëª¨ë‘ ì´ë™
-		map[s[tail].x][s[tail].y] = 0, tail++;	// ê¼¬ë¦¬ ì´ë™ (break ì—†ì´ ë‹¤ìŒ case ìˆ˜í–‰)
-	case 2:	// ë‹¤ìŒ ìœ„ì¹˜ì— ì‚¬ê³¼ê°€ ìˆëŠ” ê²½ìš° ë¨¸ë¦¬ë§Œ ì´ë™
-		s[++head] = { nx, ny };	// ë¨¸ë¦¬ ì´ë™
-	}
-	return true;
-}
+int dx[4] = { 0, 1, 0, -1 };	// ¿ì, ÇÏ, ÁÂ, »ó
+int dy[4] = { 1, 0, -1, 0 };	// ¿ì, ÇÏ, ÁÂ, »ó
+int N, K, L, t, dir = 0;
 
 int main(void) {
-	int K, L;
-	// ì…ë ¥ë¶€
+	// ÀÔ·ÂºÎ
 	scanf("%d", &N);
-	init();
+	for (int i = 0; i <= N + 1; i++)	// map Å×µÎ¸® º®À¸·Î Ç¥½Ã
+		map[i][0] = map[0][i] = map[N + 1][i] = map[i][N + 1] = OVER;
 	scanf("%d", &K);
-	while (K--) {
+	for (int i = 0; i < K; i++) {	// K°³ÀÇ »ç°ú À§Ä¡ ÀÔ·Â
 		int x, y;
 		scanf("%d %d", &x, &y);
-		map[x][y] = 2;
+		map[x][y] = APPLE;
 	}
 	scanf("%d", &L);
-	while (L--) {
-		int t; char c;
-		scanf("%d %c", &t, &c);
-		ctrl[t] = c;
+	for (int i = 0; i < L; i++) {	// ¸Ó¸® È¸Àü Á¤º¸ ÀÔ·Â
+		int X; char C;
+		scanf("%d %c", &X, &C);
+		turn[X] = C;
 	}
-	// ì²˜ë¦¬ë¶€
-	while (move()) time++;
-	// ì¶œë ¥ë¶€
-	printf("%d\n", time);
+	// Ã³¸®ºÎ
+	map[1][1] = OVER, s.push_front({ 1, 1 });
+	for (t = 1; t <= 10000; t++) {
+		int nx = s[0].x + dx[dir], ny = s[0].y + dy[dir];
+
+		if (map[nx][ny] == OVER) {	// °ÔÀÓ ¿À¹ö
+			printf("%d\n", t);
+			return 0;
+		}
+		if (map[nx][ny] == EMPTY) {	// ºó °ø°£
+			snake tail = s.back(); s.pop_back();
+			map[tail.x][tail.y] = EMPTY;
+		}
+		// ºó °ø°£ ¶Ç´Â »ç°úÀÎ °æ¿ì ¸Ó¸® À§Ä¡ Ç¥½Ã ¹× push
+		map[nx][ny] = OVER;
+		s.push_front({ nx, ny });
+
+		// ´ÙÀ½ ÁøÇà ¹æÇâ ¾÷µ¥ÀÌÆ®
+		if (turn[t] == 'L')
+			dir == 0 ? dir = 3 : dir--;
+		else if (turn[t] == 'D')
+			dir == 3 ? dir = 0 : dir++;
+	}
 	return 0;
 }
