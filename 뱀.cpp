@@ -1,3 +1,7 @@
+/*
+https://www.acmicpc.net/problem/3190
+*/
+
 #include <cstdio>
 #include <deque>
 using namespace std;
