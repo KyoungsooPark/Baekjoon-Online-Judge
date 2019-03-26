@@ -42,8 +42,8 @@ void go(int x, int y, int &cnt, bool flag) {
 		}
 	}
 }
-// 상대의 죽은 돌 검사
-int count() {
+// 상대의 죽은 돌 개수 검사
+int count(void) {
 	int ret = 0;
 	// 전체 맵 검사
 	for (int x = 0; x < N; x++) {
@@ -78,12 +78,12 @@ int main(void) {
 					for (int y2 = (x1 == x2) ? y1 + 1 : 0; y2 < M; y2++) {
 						if (adjacent(x2, y2)) {	// 상대의 돌에 인접한 위치인 경우
 							map[x2][y2] = 1;	// 해당 위치에 두 번째 돌을 놓음
-							ans = max(ans, count());	// 
-							map[x2][y2] = 0;
+							ans = max(ans, count());	// 상대의 죽은 돌 개수 검사
+							map[x2][y2] = 0;	// 두 번째 돌 회수
 						}
 					}
 				}
-				map[x1][y1] = 0;
+				map[x1][y1] = 0;	// 첫 번째 돌 회수
 			}
 		}
 	}
