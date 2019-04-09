@@ -6,11 +6,10 @@ https://www.acmicpc.net/problem/17070
 using namespace std;
 
 int map[16][16];
-int dx[3] = { 0, 1, 1 };	// ¡æ, ¢Ù, ¡é
-int dy[3] = { 1, 1, 0 };	// ¡æ, ¢Ù, ¡é
-int N;
-long long ans = 0;
-// ÇöÀç À§Ä¡(x, y) ¹× ¹æÇâ(d)À¸·ÎºÎÅÍ ´ÙÀ½ À§Ä¡ ¹× ¹æÇâ dfs ¹× ÀÌµ¿
+int dx[3] = { 0, 1, 1 };	// â†’, â†˜, â†“
+int dy[3] = { 1, 1, 0 };	// â†’, â†˜, â†“
+int N, ans = 0;
+// í˜„ì¬ ìœ„ì¹˜(x, y) ë° ë°©í–¥(d)ìœ¼ë¡œë¶€í„° ë‹¤ìŒ ìœ„ì¹˜ ë° ë°©í–¥ dfs ë° ì´ë™
 void go(int x, int y, int d) {
 	if (x == N - 1 && y == N - 1) {
 		ans++;
@@ -18,40 +17,40 @@ void go(int x, int y, int d) {
 	}
 	int nx = x + 1, ny = y + 1;
 	switch (d) {
-	case 0:	// ¡æ
+	case 0:	// â†’
 		if (ny < N && !map[x][ny]) {
-			go(x, ny, 0);	// ¡æ
+			go(x, ny, 0);	// â†’
 			if (nx < N && !map[nx][y] && !map[nx][ny])
-				go(nx, ny, 1);	// ¢Ù
+				go(nx, ny, 1);	// â†˜
 		}
 		break;
-	case 1:	// ¢Ù
-			// ¡æ, ¢Ù, ¡é
+	case 1:	// â†˜
+			// â†’, â†˜, â†“
 		if (ny < N && !map[x][ny]) {
-			go(x, ny, 0);	// ¡æ
+			go(x, ny, 0);	// â†’
 			if (nx < N && !map[nx][y] && !map[nx][ny])
-				go(nx, ny, 1);	// ¢Ù
+				go(nx, ny, 1);	// â†˜
 		}
 		if (nx < N && !map[nx][y])
-			go(nx, y, 2);	// ¡é
+			go(nx, y, 2);	// â†“
 		break;
-	case 2:	// ¡é
+	case 2:	// â†“
 		if (nx < N && !map[nx][y]) {
-			go(nx, y, 2);	// ¡é
+			go(nx, y, 2);	// â†“
 			if (ny < N && !map[x][ny] && !map[nx][ny])
-				go(nx, ny, 1);	// ¢Ù
+				go(nx, ny, 1);	// â†˜
 		}
 	}
 }
 
 int main(void) {
-	// ÀÔ·ÂºÎ
+	// ì…ë ¥ë¶€
 	scanf("%d", &N);
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < N; j++)
 			scanf("%d", &map[i][j]);
-	// Ã³¸®ºÎ
+	// ì²˜ë¦¬ë¶€
 	go(0, 1, 0);
-	// Ãâ·ÂºÎ
+	// ì¶œë ¥ë¶€
 	printf("%d\n", ans);
 }
