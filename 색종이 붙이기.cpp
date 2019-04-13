@@ -2,90 +2,71 @@
 https://www.acmicpc.net/problem/17136
 */
 
-#include <cstdio>
-#include <queue>
+#include <iostream>
+#include <vector>
 using namespace std;
-typedef struct { int x, y; } point;
+struct point { int x, y; };
 
-vector<point> v;	// ìƒ‰ì¢…ì´ë¥¼ ë†“ì•„ì•¼ í•˜ëŠ” ìœ„ì¹˜ ì €ì¥
-int map[10][10];
-int check[6] = { 0, 5, 5, 5, 5, 5 };	// ë‚¨ì€ ìƒ‰ì¢…ì´ ê°œìˆ˜
-int dx[3] = { 0, 1, 1 };	// â†’, â†“, â†˜
-int dy[3] = { 1, 0, 1 };	// â†’, â†“, â†˜
+vector<point> v;	// »öÁ¾ÀÌ¸¦ ³õ¾Æ¾ß ÇÏ´Â À§Ä¡ ÀúÀå
+bool map[10][10];
+int cnt[6] = { 0, 5, 5, 5, 5, 5 };	// ³²Àº »öÁ¾ÀÌ °³¼ö
 int ans = 2e9;
 
 int min(int a, int b) { return a < b ? a : b; }
-
-void set(point p, int range, int val) {
-	for (int i = p.x; i < p.x + range; i++)
-		for (int j = p.y; j < p.y + range; j++)
-			map[i][j] = val;
-	val == 0 ? check[range]-- : check[range]++;
-}
-// ë†“ì„ ìˆ˜ ìˆëŠ” ìƒ‰ì¢…ì´ ìµœëŒ€ í¬ê¸° ê³„ì‚°
+// ³õÀ» ¼ö ÀÖ´Â »öÁ¾ÀÌ ÃÖ´ë Å©±â °è»ê
+// °Ë»ç ¹üÀ§ rÀ» Áõ°¡½ÃÅ°¸ç ¿À¸¥ÂÊ, ¾Æ·¡ Å×µÎ¸® °Ë»ç
+// ex) (x, y)¿¡¼­ 2x2 °Ë»ç => (x, y + 1), (x + 1, y + 1), (x, y + 1) °Ë»ç
 int max_range(point p) {
-	bool visited[5][5] = { false };	// í˜„ì¬ ìœ„ì¹˜ë¡œë¶€í„° ìµœëŒ€ 5x5 í¬ê¸° ë²”ìœ„ ë°©ë¬¸ ì—¬ë¶€ ê²€ì‚¬
-	int ret = 1;	// ì£¼ì–´ì§„ ìœ„ì¹˜ pì— ë†“ì„ ìˆ˜ ìˆëŠ” ìƒ‰ì¢…ì´ ìµœì†Œ í¬ê¸°
-	queue<point> q;	// ì£¼ì–´ì§„ ìœ„ì¹˜ pë¡œë¶€í„° â†’, â†“, â†˜ íƒìƒ‰
-	q.push(p);
-	visited[0][0] = true;
-
-	while (!q.empty()) {
-		int size = q.size();
-		while (size--) {
-			point now = q.front(); q.pop();
-			for (int d = 0; d < 3; d++) {
-				int nx = now.x + dx[d], ny = now.y + dy[d];
-				if (0 <= nx && nx < 10 && 0 <= ny && ny < 10) {
-					if (map[nx][ny] && !visited[nx - p.x][ny - p.y]) {
-						q.push({ nx, ny });
-						visited[nx - p.x][ny - p.y] = true;
-					}
-				}
-			}
-		}
-		// ex) 2x2 ê°€ëŠ¥í•œ ê²½ìš° íì— ì‚½ì…ë˜ëŠ” ìœ„ì¹˜ ìˆ˜ = (2 * 1) + 1 = 3
-		//     3x3 ê°€ëŠ¥í•œ ê²½ìš° íì— ì‚½ì…ë˜ëŠ” ìœ„ì¹˜ ìˆ˜ = (2 * 2) + 1 = 3
-		//     => n x n : 2n - 1 = 2(n - 1) + 1 = 2(ret) + 1
-		if (q.size() != ret * 2 + 1 || ret == 5)	return ret;
-		ret++;
+	int r;
+	for (r = 1; r < 5; r++) {
+		for (int x = p.x; x <= p.x + r; x++)
+			if (x > 9 || p.y + r > 9 || !map[x][p.y + r])
+				return r;
+		for (int y = p.y; y < p.y + r; y++)
+			if (p.x + r > 9 || y > 9 || !map[p.x + r][y])
+				return r;
 	}
+	return r;
+}
+// range Å©±âÀÇ »öÁ¾ÀÌ¸¦ map¿¡ »ç¿ë ¶Ç´Â È¸¼ö
+void set(point p, int range, bool val) {
+	for (int x = p.x; x < p.x + range; x++)
+		for (int y = p.y; y < p.y + range; y++)
+			map[x][y] = val;
+	val ? cnt[range]++ : cnt[range]--;	// falseÀÎ °æ¿ì »ç¿ë, trueÀÎ °æ¿ì È¸¼ö
 }
 
-void go(int i, int n, int total) {
-	if (ans < n)	return;	// í˜„ì¬ê¹Œì§€ì˜ best caseë¥¼ ë„˜ì–´ê°€ëŠ” ê²½ìš° íƒìƒ‰ ì•ˆí•¨
-	if (total == v.size()) {	// ëª¨ë“  ì§€ì  íƒìƒ‰ ì™„ë£Œ
+void go(int idx, int n, int total) {
+	if (total == v.size()) {	// ¸ğµç ÁöÁ¡ Å½»ö ¿Ï·á
 		ans = min(ans, n);
 		return;
 	}
-	if (!map[v[i].x][v[i].y]) {	// ìƒ‰ì¢…ì´ê°€ ì´ë¯¸ ë†“ì—¬ì§„ ìœ„ì¹˜ì¸ ê²½ìš°
-		go(i + 1, n, total);	// ë‹¤ìŒ ìœ„ì¹˜ë¡œ ì´ë™
+	if (ans == n)	return;	// ÇöÀç±îÁöÀÇ best case¸¦ ³Ñ¾î°¡´Â °æ¿ì Å½»ö ¾ÈÇÔ
+	if (!map[v[idx].x][v[idx].y]) {	// »öÁ¾ÀÌ°¡ ÀÌ¹Ì ³õ¿©Áø À§Ä¡ÀÎ °æ¿ì
+		go(idx + 1, n, total);	// ´ÙÀ½ À§Ä¡·Î ÀÌµ¿
 		return;
 	}
-	// ì‚¬ìš© ê°€ëŠ¥í•œ ìƒ‰ì¢…ì´ ìµœëŒ€ í¬ê¸°ë¶€í„° ì‘ì€ í¬ê¸°ê¹Œì§€ íƒìƒ‰
-	for (int r = max_range(v[i]); r > 0; r--) {
-		if (check[r]) {	// í•´ë‹¹ í¬ê¸°ì˜ ìƒ‰ì¢…ì´ ê°œìˆ˜ê°€ ë‚¨ì•„ìˆëŠ” ê²½ìš°
-			set(v[i], r, 0);	// ìƒ‰ì¢…ì´ ì‚¬ìš©
-			go(i + 1, n + 1, total + r * r);	// ë‹¤ìŒ ìœ„ì¹˜ íƒìƒ‰
-			set(v[i], r, 1);	// ìƒ‰ì¢…ì´ íšŒìˆ˜
+	// »ç¿ë °¡´ÉÇÑ »öÁ¾ÀÌ ÃÖ´ë Å©±âºÎÅÍ ÀÛÀº Å©±â±îÁö Å½»ö
+	for (int r = max_range(v[idx]); r > 0; r--) {
+		if (cnt[r]) {	// ÇØ´ç Å©±âÀÇ »öÁ¾ÀÌ °³¼ö°¡ ³²¾ÆÀÖ´Â °æ¿ì
+			set(v[idx], r, false);	// »öÁ¾ÀÌ »ç¿ë
+			go(idx + 1, n + 1, total + r * r);	// ´ÙÀ½ À§Ä¡ Å½»ö
+			set(v[idx], r, true);	// »öÁ¾ÀÌ È¸¼ö
 		}
 	}
 }
 
 int main(void) {
-	// ì…ë ¥ë¶€
+	// ÀÔ·ÂºÎ
 	for (int i = 0; i < 10; i++)
 		for (int j = 0; j < 10; j++) {
-			scanf("%d", &map[i][j]);
-			if (map[i][j])	v.push_back({ i, j });
+			cin >> map[i][j];
+			if (map[i][j])
+				v.push_back({ i, j });
 		}
-	// ì²˜ë¦¬ë¶€
-	if (!v.size()) {
-		printf("0\n");
-		return 0;
-	}
+	// Ã³¸®ºÎ
 	go(0, 0, 0);
-	// ì¶œë ¥ë¶€
+	// Ãâ·ÂºÎ
 	printf("%d\n", ans == 2e9 ? -1 : ans);
 	return 0;
 }
