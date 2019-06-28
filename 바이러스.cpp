@@ -3,7 +3,6 @@ https://www.acmicpc.net/problem/2606
 */
 
 #include <cstdio>
-#include <vector>
 using namespace std;
 
 int set[101];
